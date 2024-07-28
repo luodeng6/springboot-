@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册页面</title>
+    <!-- 引入Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- 引入Layui CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui/src/css/layui.css">
+    <!-- 自定义样式 -->
+    <style>
+        .register-container {
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .announcement-container {
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            height: 100%;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .marquee {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            animation: marquee 10s linear infinite;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <!-- 滚动提示栏 -->
+    <div class="marquee">欢迎来到注册页面，有问题请联系我们的客服!</div>
+
+    <div class="container">
+        <div class="row">
+            <!-- 公告展示区 -->
+            <div class="col-md-4">
+                <div id="announcement" class="announcement-container">
+                    <h4>最近注册用户</h4>
+                    <ul class="list-group" style="margin-top: 20px;">
+                        <li class="list-group-item" v-for="user in recentUsers" :key="user.username">
+                            <strong>用户名：</strong> {{ user.username }}<br>
+                            <strong>姓名：</strong> {{ user.name }}<br>
+                            <strong>创建时间：</strong> {{ formatDate(user.create_time) }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 注册表单 -->
+            <div class="col-md-8">
+                <div class="register-container">
+                    <h2 class="text-center">注册</h2>
+                    <form @submit.prevent="validateForm">
+                        <div class="form-group">
+                            <label for="name">姓名</label>
+                            <input type="text" class="form-control" id="name" v-model="formData.name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" class="form-control" id="username" v-model="formData.username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>性别</label>
+                            <div>
+                                <label class="radio-inline"><input type="radio" v-model="formData.sex" value="male"> 男
+                                </label>
+                                <label class="radio-inline"><input type="radio" v-model="formData.sex" value="female"> 女
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" class="form-control" id="password" v-model="formData.password"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" class="form-control" id="email" v-model="formData.email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">注册</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 邮箱验证码弹窗 -->
+    <div id="email-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="email-modal-label"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="email-modal-label">请输入邮箱验证码</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="emailCode" v-model="verificationCode"
+                           placeholder="验证码">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" @click="submitRegistration">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入Vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 引入Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- 引入jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 引入Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 引入 layui.js -->
+<script src="//unpkg.com/layui@2.9.14/dist/layui.js"></script>
+<script src="js/pulblicfuntion.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            // 表单数据
+            formData: {
+                name: '',
+                username: '',
+                sex: '',
+                password: '',
+                email: ''
+            },
+            // 验证码
+            verificationCode: '',
+            // 最近注册用户
+            recentUsers: []
+        },
+        created() {
+            // 获取最近注册用户列表
+            axios.get('/user/getSomeUser6').then(response => {
+                if (response.data.result) {
+                    this.recentUsers = response.data.data;
+                } else {
+                    layer.msg('获取用户列表失败,请联系管理员', {icon: 2, time: 1000});
+                }
+            }).catch(error => {
+                console.log(error);
+                layer.msg('获取最近注册用户列表失败', {icon: 2, time: 1000});
+            });
+        },
+        methods: {
+            formatDate(isoString) {
+                const date = new Date(isoString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() 返回值为 0-11
+                const day = String(date.getDate()).padStart(2, '0');
+                /* const hours = String(date.getHours()).padStart(2, '0');
+                 const minutes = String(date.getMinutes()).padStart(2, '0');*/
+                /*return `${year}-${month}-${day} ${hours}:${minutes}`;*/
+                return `${year}-${month}-${day}`;
+            },
+            // 验证表单数据并显示验证码弹窗
+            validateForm: function () {
+                // 显示验证码弹窗
+                $('#email-modal').modal('show');
+            }
+            ,
+            // 提交注册数据
+            submitRegistration: function () {
+                // 关闭验证码弹窗
+                $('#email-modal').modal('hide');
+
+                // 组合表单数据与验证码
+                const dataToSubmit = {
+                    ...this.formData,
+                    verificationCode: this.verificationCode
+                };
+
+                // 模拟 POST 请求
+                setTimeout(() => {
+                    alert('注册成功!');
+                    console.log(dataToSubmit);
+                    // 更新最近注册用户列表
+                    this.recentUsers.push({
+                        username: this.formData.username,
+                        name: this.formData.name,
+                        createdAt: new Date().toLocaleString()
+                    });
+                    // 清空表单数据
+                    this.formData = {
+                        name: '',
+                        username: '',
+                        sex: '',
+                        password: '',
+                        email: ''
+                    };
+                    this.verificationCode = '';
+                }, 1000);
+            }
+        }
+    })
+    ;
+</script>
+</body>
+</html>

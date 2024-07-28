@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>收藏</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/ziy.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.7.6/css/layui.css">-->
+    <link rel="stylesheet" type="text/css" href="css/index2.css">
+    <link rel="stylesheet" type="text/css" href="css/ziy.css">
+
+    <!-- 引入 layui.css -->
+    <link href="layui/layui.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+    <!--引入图标库-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="elementUI/elementCSS.css"/>
+    <!--    &lt;!&ndash;引入element的图标库&ndash;&gt;-->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <style>
+        .jinp_tuij_lb li {
+            margin-right: 3%;
+            width: 31%;
+        }
+
+        .jinp_tuij_lb li:nth-child(3n+3) {
+            margin-right: 0;
+        }
+
+        .jinp_tuij_lb li > a:first-of-type,
+        .jinp_tuij_lb li > a:first-of-type > img {
+            width: 100%;
+        }
+
+        .logo {
+            width: 20% !important;
+        }
+
+        .search {
+            width: 35% !important;
+        }
+
+        .search > input {
+            width: 50% !important;
+        }
+
+        .header-box {
+            width: 100%;
+        }
+
+        .myGomeWeb {
+            display: flex;
+            justify-content: center;
+        }
+
+        .myGomeWeb > div {
+            float: none;
+        }
+
+        .myGomeWeb > div:first-of-type {
+            margin-right: 30px;
+        }
+
+        .shuju_tongji {
+            width: 297px;
+        }
+
+        .shuju_tongji span {
+            font-size: 12px;
+        }
+
+        .shuju_tongji i {
+            font-size: 20px;
+        }
+
+
+        .el-avatar--large {
+            width: 63px;
+            height: 63px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+
+        /*头像上传样式statrt*/
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+
+        /*头像上传样式end*/
+    </style>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+    <!--头部-->
+    <nav class="navbar">
+        <div class="nav-container" style="width: 100%;position: relative;">
+            <a href="book.html" class="brand"><i class="bi bi-house-door"></i> 首页</a>
+            <ul class="nav-links">
+                <li><a href="dingdan.html"><i class="bi bi-clipboard-data"></i> 我的订单</a></li>
+                <li><a href="gouwuche.html"><i class="bi bi-cart"></i> 我的购物车</a></li>
+                <li><a href="myborrow.html"><i class="bi bi-journal-check"></i> 借书记录</a></li>
+                <li><a href="#"><i class="bi bi-heart"></i> 我的收藏</a></li>
+                <li><a href="gonggao.html"><i class="bi bi-megaphone"></i> 系统公告(5)</a></li>
+                <li><a href="wenda.html"><i class="bi bi-chat-text"></i> 问答(5)</a></li>
+                <li style="margin-left: 100px;">
+                    <img @click="show_alter_info" style="width: 32px;cursor: pointer;" :src="user.profile" alt="">
+                </li>
+                <li><a href="zhuye.html"><i class="bi bi-person"></i> 主页</a></li>
+                <li @click="logout"><i class="bi bi-box-arrow-right"></i> 退出登录</li>
+            </ul>
+        </div>
+    </nav>
+    <!--头部end-->
+
+
+    <div class="wod_tongc_zhongx">
+        <div class="beij_center">
+            <div class="myGomeWeb">
+                <!--侧边导航-->
+                <div class="tod_tongc_zuoc">
+
+
+                    <el-container>
+
+
+                        <el-card>
+                            <div style="margin-bottom: 37px;display: flex;">
+                                <div @click="change_profile" style="cursor: pointer;">
+                                    <el-avatar icon="fas fa-user-circle" :size="100" :src="user.profile"></el-avatar>
+                                </div>
+                                <div style="    display: flex;justify-content: center;align-items: center;
+                                                position: relative;
+                                                left: 30px;
+                                                top: 7px;">
+                                    <span style="margin-left: 10px;margin-bottom: 20px;    font-size: 22px;">{{user.username}}</span>
+                                    <span style="margin-left: 10px;margin-bottom: 20px;    font-size: 22px;">{{user.name}}</span>
+                                </div>
+
+                            </div>
+                            <div class="shuju_tongji">
+                                <div style="margin-bottom: 40px;display: flex;justify-content: space-around;">
+                                    <div>
+                                        <i class="fas fa-wallet fa-2x" style="color: #ff9900;"></i>
+                                        <span>余额：{{user.balance}}元</span>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-shopping-cart fa-2x" style="color: #3c8dbc;"></i>
+                                        <span>购物车数量：3</span>
+                                    </div>
+                                </div>
+
+
+                                <div style="display: flex;justify-content: space-around;    margin-bottom: 30px;">
+                                    <div>
+                                        <i class="fas fa-box fa-2x" style="color: #00a65a;"></i>
+                                        <span>订单数量：5</span>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-book fa-2x" style="color: #f39c12;"></i>
+                                        <span>借书数量：2</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </el-card>
+                    </el-container>
+
+
+                    <div class="wod_tongc_daoh_lieb">
+                        <div class="diy_top">
+                            <!-- <ul>
+                                 <h3>订单中心</h3>
+                                 <li><a href="wod_dingd.html">我的订单</a></li>
+                                 <li><a href="#">退换货单</a></li>
+                                 <li><a href="#">评价晒单</a></li>
+                             </ul>-->
+                            <!--<ul>
+                                <h3>管理中心</h3>
+                                <li><a href="wod_shouc.html">我的收藏</a></li>
+                                <li><a href="#">投诉管理</a></li>
+                            </ul>-->
+                        </div>
+
+
+                        <!--  <div class="diy_top">
+                              <ul>
+                                  <h3>账户设置</h3>
+                                  <li><a href="#">基本资料</a></li>
+                                  <li><a href="#">账户安全</a></li>
+                                  <li><a href="#">收货地址</a></li>
+                              </ul>
+                          </div>-->
+
+
+                    </div>
+                </div>
+                <!--左边内容-->
+                <div class="mod_main">
+                    <div class="jib_xinx_kuang">
+                        <div class="shand_piaot">我的收藏</div>
+                        <div class="slideTxtBox_shouc">
+                            <div class="hd">
+
+                            </div>
+                            <div class="bd">
+                                <ul>
+                                    <div></div>
+                                    <div class="uc_overdueTable">
+                                        <div class="list_thead">
+                                            <div class="col432">
+                                                <label class="label">
+                                                    <input class="checkbox" type="checkbox">全选</label>
+                                            </div>
+                                        </div>
+                                        <div class="diyig_s">
+                                            <ol>
+                                                <li>
+                                                    <label><input type="checkbox" class="checkbox"></label>
+                                                    <div class="overflow">
+                                                        <div class="shouc_img">
+                                                            <a href="#">
+                                                                <img src="images/我的订单/洗手液.jpg"
+                                                                     style="width: 100px;height: 60px;"></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col280">
+                                                        <h2><a href="#" title="伊索赋活芳香洗手液 500ml"
+                                                               target="_blank">伊索赋活芳香洗手液 500ml</a></h2>
+                                                        <div class="price_box"><span>¥234.90</span></div>
+                                                        <div class="price_box"><span
+                                                                class="font_aide">收藏时间：2020-12-20</span></div>
+                                                        <div class="price_box">
+                                                            <a href="jiar_gouw_c.html"
+                                                               class="button_grey">加入购物车</a>
+                                                            <a href="#" class="button_grey">取消收藏</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="youh_d">有货</div>
+                                                </li>
+                                                <li>
+                                                    <label><input type="checkbox" class="checkbox"></label>
+                                                    <div class="overflow">
+                                                        <div class="shouc_img">
+                                                            <a href="#">
+                                                                <img src="images/我的订单/乳液.jpg"
+                                                                     style="width: 100px;height: 60px;"></a>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col280">
+                                                        <h2><a href="#" title="Aveeno 日用保湿乳液" target="_blank">Aveeno
+                                                            日用保湿乳液</a></h2>
+                                                        <div class="price_box"><span>¥63.95</span></div>
+                                                        <div class="price_box"><span
+                                                                class="font_aide">收藏时间：2020-12-20</span></div>
+                                                        <div class="price_box">
+                                                            <a href="jiar_gouw_c.html"
+                                                               class="button_grey">加入购物车</a>
+                                                            <a href="#" class="button_grey">取消收藏</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="youh_d">有货</div>
+                                                </li>
+                                            </ol>
+
+                                        </div>
+                                    </div>
+                                </ul>
+                                <el-pagination
+                                        background
+                                        layout="prev, pager, next"
+                                        :total="15">
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--左边内容结束-->
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <el-dialog title="修改头像" :visible.sync="showDialog">
+            <el-upload
+                    ref="upload"
+                    class="avatar-uploader"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :show-file-list="false"
+                    :before-upload="beforeAvatarUpload">
+                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showDialog = false">取消</el-button>
+                <el-button type="primary" @click="submitUpload">确定</el-button>
+            </div>
+        </el-dialog>
+
+
+    </div>
+</div>
+
+<!-- 引入 jQuery -->
+<script src="js/jquery.min.js"></script>
+<!-- 引入 layui.js -->
+<script src="layui/layui.js"></script>
+<script src="bootstrap/bootstrap.min.js"></script>
+<script src="js/vue@2.js"></script>
+<!-- 引入 Axios 库 -->
+<script src="js/axios.min.js"></script>
+<script src="elementUI/elementJS.js"></script>
+<!--使用数据的前提-->
+<script src="js/data.js"></script>
+<script src="js/pulblicfuntion.js"></script>
+<script>
+    var zhuye = new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            showDialog: false,
+            imageUrl: '',
+            file: null,
+            yuming: urlluodeng,
+            /* {
+                 "id": 1,
+                 "profile": "dataimg/%E6%%9A%.jpg",
+                 "name": "罗邓",
+                 "username": "ld",
+                 "password": "123",
+                 "balance": 0.0,
+                 "email": "3066992141@qq.com",
+                 "sex": "男"
+             },*/
+        },
+        methods: {
+            logout() {
+                logout();
+            },
+            show_alter_info() {
+                showUserAvatar(this.user);
+            },
+            change_profile() {
+                this.showDialog = true;
+                console.log("弹窗打开");
+            },
+
+
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                if (isJPG && isLt2M) {
+                    this.imageUrl = URL.createObjectURL(file);
+                    this.file = file;
+                }
+                return false; // 阻止自动上传
+            },
+            submitUpload() {
+                if (this.file) {
+                    const formData = new FormData();
+                    formData.append('file', this.file);
+
+                    axios.post(urlluodeng + '/user/updateAvatar', formData)
+                        .then(response => {
+                            if (response.data.result) {
+                                this.$message.success('上传成功');
+                                this.showDialog = false;
+                                // 清理数据
+                                this.imageUrl = '';
+                                this.file = null;
+                            } else {
+                                this.$message.error('上传失败');
+                            }
+                        })
+                        .catch(error => {
+                            this.$message.error('上传失败');
+                            console.error(error);
+                        });
+                } else {
+                    this.$message.error('请先选择图片');
+                }
+            }
+
+
+        }, created() {
+            // 读取登录用户信息
+            axios.get(urlluodeng + '/user/getLoginUser').then((response) => {
+                if (!response.data.result) {
+                    alert(response.data.msg);
+                    /* setTimeout(() => {
+                         window.location.href = 'login.html';
+                     }, 1000);*/
+                } else {
+                    this.user = response.data.userData;
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

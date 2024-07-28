@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace=".dao.GonggaoDao">
+
+    <resultMap type=".entity.Gonggao" id="GonggaoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="time" column="time" jdbcType="TIMESTAMP"/>
+        <result property="user" column="user" jdbcType="VARCHAR"/>
+        <result property="important" column="important" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="GonggaoMap">
+        select
+idtitlecontenttimeuserimportant
+        from gonggao
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GonggaoMap">
+        select
+idtitlecontenttimeuserimportant
+        from gonggao
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="user != null and user != ''">
+                and user = #{user}
+            </if>
+            <if test="important != null">
+                and important = #{important}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from gonggao
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="user != null and user != ''">
+                and user = #{user}
+            </if>
+            <if test="important != null">
+                and important = #{important}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into gonggao(titlecontenttimeuserimportant)
+        values (#{title}#{content}#{time}#{user}#{important})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into gonggao(titlecontenttimeuserimportant)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.title}#{entity.content}#{entity.time}#{entity.user}#{entity.important})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into gonggao(titlecontenttimeuserimportant)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.title}#{entity.content}#{entity.time}#{entity.user}#{entity.important})
+        </foreach>
+        on duplicate key update
+title = values(title)content = values(content)time = values(time)user = values(user)important = values(important)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update gonggao
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="user != null and user != ''">
+                user = #{user},
+            </if>
+            <if test="important != null">
+                important = #{important},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from gonggao where id = #{id}
+    </delete>
+
+</mapper>
+

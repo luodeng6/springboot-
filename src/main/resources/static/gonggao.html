@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章浏览页面</title>
+    <link href="layui/layui.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+    <!--引入图标库-->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="elementUI/elementCSS.css"/>
+    <!--    &lt;!&ndash;引入element的图标库&ndash;&gt;-->
+    <!--    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+
+    <link rel="stylesheet" href="css/index.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            /*max-width: 800px;*/
+            margin: 25px auto;
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .article {
+            margin-top: 20px;
+        }
+        .article h2 {
+            margin-top: 0;
+        }
+        .article p {
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<!--头部-->
+<nav class="navbar">
+    <div class="nav-container" style="width: 100%;position: relative;">
+        <a href="book.html" class="brand"><i class="bi bi-house-door"></i> 首页</a>
+        <ul class="nav-links">
+            <li><a href="#"><i class="bi bi-clipboard-data"></i> 我的订单</a></li>
+            <li><a href="gouwuche.html"><i class="bi bi-cart"></i> 我的购物车</a></li>
+            <li><a href="myborrow.html"><i class="bi bi-journal-check"></i> 借书记录</a></li>
+            <li><a href="#"><i class="bi bi-heart"></i> 我的收藏</a></li>
+            <li><a href="gonggao.html"><i class="bi bi-megaphone"></i> 系统公告(5)</a></li>
+            <li><a href="wenda.html"><i class="bi bi-chat-text"></i> 问答(5)</a></li>
+            <li style="margin-left: 100px;">
+                <img @click="show_alter_info" style="width: 32px;cursor: pointer;" :src="user.profile" alt="">
+            </li>
+            <li><a href="zhuye.html"><i class="bi bi-person"></i> 主页</a></li>
+            <li @click="logout"><i class="bi bi-box-arrow-right"></i> 退出登录</li>
+        </ul>
+    </div>
+</nav>
+<!--头部end-->
+
+<div class="container">
+    <div class="header">
+        <h1>公告</h1>
+    </div>
+    <div class="article">
+        <h2>关于系统升级的通知</h2>
+     <!--文章主体start-->
+        <div class="entry-content">
+            <div class="single-content">
+                <fieldset><legend></legend>
+                    <blockquote>原文地址：<a href="https://cuijiahua.com/blog/2024/05/ai-99.html">https://cuijiahua.com/blog/2024/05/ai-99.html</a></blockquote>
+                </fieldset>
+                “少数”网友都有通过“翻墙”软件链接境外网站的经历，特别是互联网从业者，经常需要下载一些国外网站上的代码 or 学术资料。
+
+                也有人用来浏览境外网站看视频，看小电影，这种科学上网合法吗？
+
+                <strong>案例1：</strong>
+
+                2023 年，在宁夏银川的李某某多次使用其 Twitter（推特）账号浏览SE情视频，时长竟然恰巧长达两年半，被当地网警抓获后，给予了警告并且处罚款的处罚。
+
+                <img class="size-full wp-image-10645 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-1.png" sizes="(max-width: 1080px) 100vw, 1080px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-1.png 1080w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-1-300x139.png 300w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-1-768x356.png 768w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-1-1024x475.png 1024w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="1080" height="501" />
+
+                <strong>案例2：</strong>
+
+                再比如这个杨某某，也被网警叔叔们发现之后，处以了警告和罚款，罚款大概 500 ~ 1000 这样子。
+
+                <img class="size-full wp-image-10646 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-2.png" sizes="(max-width: 677px) 100vw, 677px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-2.png 677w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-2-300x140.png 300w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="677" height="317" />
+
+                很显然，个人使用 VPN 软件“翻墙”属于违法行为。
+
+                那为什么很多人使用了那么久也没有被抓？
+
+                看到这个问题，你肯定有些疑惑，这里我就一一科普下。
+
+                首先明确一个概念：<strong>VPN ≠ “翻墙”</strong>。
+
+                VPN 是 Virtual Private Network 的缩写，中文叫虚拟专用网络。
+
+                功能就是在公用网络上建立专用网络，进行加密通讯，属于远程访问技术。
+
+                比如一些公司都有自己的内网，如果员工不在公司内部，想要访问公司的内网，就需要使用 VPN 远程登陆。
+
+                再比如一些大学的校园网，里面有超多的学习资源，还有各种视频种子。在学校外部想要访问这些资料，也需要使用 VPN。
+
+                而最常见的就是游戏加速器，它搭建了一个我们电脑和境外游戏服务器的桥梁，帮我们加速访问服务器，这种也属于 VPN。
+
+                <img class="size-full wp-image-10647 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-3.png" sizes="(max-width: 1000px) 100vw, 1000px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-3.png 1000w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-3-300x206.png 300w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-3-768x528.png 768w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="1000" height="688" />
+
+                以上这些，放心使用，显然不违法。我就是一个臭打游戏的。
+
+                那什么行为属于违法行为？答：“翻墙”。
+
+                <img class="size-full wp-image-10648 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-4.png" sizes="(max-width: 771px) 100vw, 771px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-4.png 771w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-4-300x110.png 300w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-4-768x282.png 768w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="771" height="283" />
+
+                “翻墙”中的“墙”就是国家公共网络监控系统。而“翻墙”就是绕过这个监控系统，使用 VPN 软件把自己的 IP 地址改变，变成国外的 IP 地址，从而达到访问外网的目的，这就是“翻墙”。
+
+                VPN 隐藏了你的 Internet 协议 (IP) 地址的服务，使得你可以匿名访问互联网。
+
+                像这种“翻墙”行为，就属于违法。
+
+                不过也有不少网友这样认为：正常工作、学术需求浏览，不在外网发表不实信息和言论，就还好。
+
+                这种个人使用 VPN 的情况，被网警发现后，会收到警告+罚款“套餐”，罚款 500 ~ 1000。
+
+                而情节严重的，比如制作、销售、传播“翻墙”软件，这种就严重了，妥妥地获得银手铐一副。
+
+                这时候可能有小伙伴会问，我有个“翻墙”软件自己用，但是比较贵，我拉了一个朋友，我提供他软件，他帮我均摊下费用，这种也是销售了，属于罪加一等。
+
+                还有小伙伴为了赚这些“翻墙”软件的积分，能多白嫖些使用时长，就把推广链接发到各个群里，这种也是罪加一等。
+
+                甚至还有一些小伙伴更喜欢用一些免费的“翻墙”软件，那就更危险了，不仅仅是违法，还有个人信息泄露的风险，要知道你的操作信息、浏览记录，都是通过这些免费“翻墙”软件中转出去的，这些服务器里面可都保存着你的各种信息。
+
+                有不少翻墙软件供应商就是为了收集用户信息，才故意提供免费 VPN 服务的。
+
+                <img class="size-full wp-image-10649 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-5.png" sizes="(max-width: 366px) 100vw, 366px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-5.png 366w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-5-300x132.png 300w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="366" height="161" />
+
+                免费 ≠ 真香，很可能是 = 真惨。
+
+                而且那种免费的，用的人很多，万一有个人瞎搞，你们还都在一台服务器上，你就不怕被一锅端吗？
+
+                <img class="size-full wp-image-10650 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-6.png" sizes="(max-width: 574px) 100vw, 574px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-6.png 574w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-6-150x150.png 150w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-6-300x300.png 300w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="574" height="574" />
+
+                那么现在问题来了，有一些人，确确实实有浏览境外网站的正经需求，应该怎么做？
+
+                我们分个人和公司的层面。
+
+                个人层面：
+
+                个人的话，其实是没有什么合法渠道的，不过可以另辟蹊径。
+
+                比如我想去 Github 下载代码，那就可以搜索 Github 镜像网站，你就能找到这样的镜像地址：
+
+                https://bgithub.xyz
+
+                https://gitclone.com
+
+                这些网站是备案过的，用途也是备案过的，直接用他们备案过的网站即可。
+
+                再比如，我想去 huggingface 下载一个模型权重文件，还是搜索 huggingface 镜像网站，你就能得到这样的镜像地址：
+
+                https://hf-mirror.com
+
+                遇事不决，就搜镜像网站，一些常用的正经用途的网站，早已有“高人”为我们铺好了道路。
+
+                再再再比如，我需要用 pip 下载一些 python 的安装包，默认的下载源是境外网站的地址，下载速度很慢。
+
+                这时候就可以搜索：pip 换源。
+
+                pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple/
+
+                pip install xxx -i https://mirrors.aliyun.com/pypi/simple
+
+                pip install xxx -i https://pypi.mirrors.ustc.edu.cn/simple/
+
+                pip install xxx -i http://pypi.douban.com/simple/
+
+                你都能找到诸如此类的清华源、阿里源、中科大源、豆瓣源等，下载速度贼快。
+
+                像前端开发，常用 npm 也能换源安装依赖包，直接搜就行。
+
+                公司层面：
+
+                公司就好说了，比如各个互联网大厂都有自己的合法 VPN 渠道，直接能访问外网。
+
+                但公司申请条件还是比较严格的：
+
+                <img class="size-full wp-image-10651 aligncenter" src="https://cuijiahua.com/wp-content/uploads/2024/05/life99-7.png" sizes="(max-width: 774px) 100vw, 774px" srcset="https://cuijiahua.com/wp-content/uploads/2024/05/life99-7.png 774w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-7-300x91.png 300w, https://cuijiahua.com/wp-content/uploads/2024/05/life99-7-768x234.png 768w" alt="使用VPN“翻墙”违法，为什么大部分人都没事？" width="774" height="236" />
+
+                不过即使是在有资质的公司里，员工也是不能用于违法用途。
+
+                比如浏览SE情网站，在外网发表不实信息和言论，依然会被抓。
+            </div>
+
+            <div id="social">
+                <div class="social-main">
+                    <div class="share-sd"></div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <!--文章end-->
+
+         </div>
+
+</div>
+
+
+
+<!-- 引入 jQuery -->
+<script src="js/jquery.min.js"></script>
+<!-- 引入 layui.js -->
+<script src="layui/layui.js"></script>
+<script src="bootstrap/bootstrap.min.js"></script>
+<script src="js/vue@2.js"></script>
+<!-- 引入 Axios 库 -->
+<script src="js/axios.min.js"></script>
+<script src="elementUI/elementJS.js"></script>
+<script src="js/data.js"></script>
+</body>
+</html>

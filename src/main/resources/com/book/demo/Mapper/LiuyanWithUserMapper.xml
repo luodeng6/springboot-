@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间  namespace里是接口类名-->
+<mapper namespace="com.book.demo.Mapper.LiuyanWithUserMapper">
+
+    <!--<resultMap id="LiuyanWithUserMap" type="com.book.demo.Pojo.LiuyanWithUser">
+        &lt;!&ndash; Liuyan fields &ndash;&gt;
+        <id property="id" column="id"/>
+        <result property="user" column="user"/>
+        <result property="content" column="content"/>
+        <result property="gonggaoid" column="gonggaoid"/>
+        <result property="time" column="time"/>
+        &lt;!&ndash; User fields &ndash;&gt;
+        <result property="gonggaoid" column="gonggaoid"/>
+        <result property="username" column="username"/>
+
+    </resultMap>
+
+    <select id="getLiuyanWithUserById" resultMap="LiuyanWithUserMap">
+        SELECT liuyan.id, liuyan.user, liuyan.message, user.img
+        FROM liuyan
+                 JOIN user ON liuyan.user = user.username
+        WHERE liuyan.id = #{id}
+    </select>-->
+
+</mapper>

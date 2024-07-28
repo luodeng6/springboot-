@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace=".dao.GouwucheDao">
+
+    <resultMap type=".entity.Gouwuche" id="GouwucheMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="user" column="user" jdbcType="VARCHAR"/>
+        <result property="bookid" column="bookid" jdbcType="INTEGER"/>
+        <result property="addtime" column="addtime" jdbcType="TIMESTAMP"/>
+        <result property="selectnum" column="selectnum" jdbcType="INTEGER"/>
+        <result property="totalprice" column="totalprice" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="GouwucheMap">
+        select*
+        from gouwuche
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GouwucheMap">
+        select
+iduserbookidaddtimeselectnumtotalprice
+        from gouwuche
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="user != null and user != ''">
+                and user = #{user}
+            </if>
+            <if test="bookid != null">
+                and bookid = #{bookid}
+            </if>
+            <if test="addtime != null">
+                and addtime = #{addtime}
+            </if>
+            <if test="selectnum != null">
+                and selectnum = #{selectnum}
+            </if>
+            <if test="totalprice != null">
+                and totalprice = #{totalprice}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from gouwuche
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="user != null and user != ''">
+                and user = #{user}
+            </if>
+            <if test="bookid != null">
+                and bookid = #{bookid}
+            </if>
+            <if test="addtime != null">
+                and addtime = #{addtime}
+            </if>
+            <if test="selectnum != null">
+                and selectnum = #{selectnum}
+            </if>
+            <if test="totalprice != null">
+                and totalprice = #{totalprice}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into gouwuche(userbookidaddtimeselectnumtotalprice)
+        values (#{user}#{bookid}#{addtime}#{selectnum}#{totalprice})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into gouwuche(userbookidaddtimeselectnumtotalprice)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.user}#{entity.bookid}#{entity.addtime}#{entity.selectnum}#{entity.totalprice})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into gouwuche(userbookidaddtimeselectnumtotalprice)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.user}#{entity.bookid}#{entity.addtime}#{entity.selectnum}#{entity.totalprice})
+        </foreach>
+        on duplicate key update
+user = values(user)bookid = values(bookid)addtime = values(addtime)selectnum = values(selectnum)totalprice = values(totalprice)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update gouwuche
+        <set>
+            <if test="user != null and user != ''">
+                user = #{user},
+            </if>
+            <if test="bookid != null">
+                bookid = #{bookid},
+            </if>
+            <if test="addtime != null">
+                addtime = #{addtime},
+            </if>
+            <if test="selectnum != null">
+                selectnum = #{selectnum},
+            </if>
+            <if test="totalprice != null">
+                totalprice = #{totalprice},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from gouwuche where id = #{id}
+    </delete>
+
+</mapper>
+

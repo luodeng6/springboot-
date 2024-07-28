@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Element UI 组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/data.js"></script>
+    <style>
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .app-aside {
+            background: #2d3a4b;
+            padding: 0;
+            height: 100vh;
+            color: white;
+        }
+
+        .app-menu {
+            height: 100%;
+        }
+
+        .app-header {
+            background: #409EFF;
+            color: white;
+            text-align: center;
+            line-height: 60px;
+            height: 60px;
+        }
+
+        .app-main {
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .form-dialog {
+            width: 1500px;
+        }
+
+        .form-action {
+            text-align: right;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .el-icon-male {
+            color: #409EFF;
+        }
+
+        .el-icon-female {
+            color: #FF69B4;
+        }
+
+        .el-dialog__body {
+            padding: 19px 93px 16px 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="app-container">
+    <!-- 左侧导航栏 -->
+    <el-aside width="200px" class="app-aside">
+        <el-menu class="app-menu" :default-openeds="['1']">
+            <el-submenu index="1">
+                <template slot="title">
+                    <i class="el-icon-menu"></i>
+                    <span>菜单</span>
+                </template>
+
+                <el-menu-item index="1-1" @click="navigateTo('Admin_index.html')">
+                    <i class="el-icon-s-data"></i>仪表盘
+                </el-menu-item>
+                <el-menu-item index="1-2" @click="navigateTo('Admin_user.html')">
+                    <i class="el-icon-user"></i>用户管理
+                </el-menu-item>
+                <el-menu-item index="1-3" @click="navigateTo('settings.html')">
+                    <i class="el-icon-setting"></i>设置
+                </el-menu-item>
+                <el-menu-item index="1-4" @click="navigateTo('Admin_wenda.html')">
+                    <i class="el-icon-question"></i>问答管理
+                </el-menu-item>
+                <el-menu-item index="1-5" @click="navigateTo('Admin_gonggao.html')">
+                    <i class="el-icon-message"></i>公告管理
+                </el-menu-item>
+                <el-menu-item index="1-6" @click="navigateTo('Admin_gouwuche.html')">
+                    <i class="el-icon-shopping-cart-full"></i>购物车管理
+                </el-menu-item>
+
+            </el-submenu>
+        </el-menu>
+    </el-aside>
+
+
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" class="form-dialog" :close-on-click-modal="false">
+        <el-form ref="userForm" :model="userForm" label-width="100px">
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="头像链接">
+                        <el-upload
+                                ref="upload"
+                                class="avatar-uploader"
+                                action="https://jsonplaceholder.typicode.com/posts/"
+                                :show-file-list="false"
+                                :before-upload="beforeAvatarUpload">
+                            <img v-if="imageUrl" :src="imageUrl" style=" width: 51%;border-radius: 10px;"
+                                 class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+
+                        <!--<div slot="footer" class="dialog-footer">
+                            <el-button @click="showDialog = false">取消</el-button>
+                            <el-button type="primary" @click="submitUpload">确定</el-button>
+                        </div>-->
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="姓名">
+                        <el-input v-model="userForm.name"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="用户名">
+                        <el-input v-model="userForm.username"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="密码">
+                        <el-input type="password" v-model="userForm.password"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="余额">
+                        <el-input v-model="userForm.balance"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="邮箱">
+                        <el-input v-model="userForm.email"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="性别">
+                        <el-radio-group v-model="userForm.sex">
+                            <el-radio label="男"><i class="el-icon-male"></i></el-radio>
+                            <el-radio label="女"><i class="el-icon-female"></i></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-form-item class="form-action" style="text-align: right;">
+                <el-button type="warning" @click="clearAvatar">清空头像</el-button>
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="handleSave">保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+
+
+    <el-dialog title="编辑用户" :visible.sync="eidtDialogVisible" class="form-dialog" :close-on-click-modal="false">
+        <el-form ref="userForm" :model="editUserForm" label-width="100px">
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="头像链接">
+                        <el-upload
+                                ref="upload"
+                                class="avatar-uploader"
+                                action="https://jsonplaceholder.typicode.com/posts/"
+                                :show-file-list="false"
+                                :before-upload="beforeAvatarEidiUpload">
+                            <img v-if="eidiUserImgUrl" :src="eidiUserImgUrl" style=" width: 51%;border-radius: 10px;"
+                                 class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+
+                        <!--<div slot="footer" class="dialog-footer">
+                            <el-button @click="showDialog = false">取消</el-button>
+                            <el-button type="primary" @click="submitUpload">确定</el-button>
+                        </div>-->
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="姓名">
+                        <el-input v-model="editUserForm.name"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="用户名">
+                        <el-input v-model="editUserForm.username"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="密码">
+                        <el-input type="password" v-model="editUserForm.password"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="余额">
+                        <el-input v-model="editUserForm.balance"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="邮箱">
+                        <el-input v-model="editUserForm.email"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-form-item label="性别">
+                        <el-radio-group v-model="editUserForm.sex">
+                            <el-radio label="男"><i class="el-icon-male"></i></el-radio>
+                            <el-radio label="女"><i class="el-icon-female"></i></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-form-item class="form-action" style="text-align: right;">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="handleEiditSave">保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+
+
+    <!-- 右侧操作区域 -->
+    <el-container>
+        <el-header class="app-header">用户管理</el-header>
+        <el-main class="app-main">
+            <!-- 用户查询模块 -->
+            <el-input placeholder="请输入用户名" v-model="search" class="input-with-select">
+                <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+            </el-input>
+
+            <!-- 用户新增模块 -->
+            <el-button type="primary" @click="dialogVisible = true" style="margin: 20px 0;">新增用户</el-button>
+
+            <!-- 用户列表展示 -->
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>用户列表</span>
+                </div>
+                <el-table :data="filteredUsers" style="width: 100%;" stripe border>
+                    <el-table-column prop="id" label="ID" width="50"></el-table-column>
+                    <el-table-column prop="profile" label="头像" width="80">
+                        <template slot-scope="scope">
+                            <el-image :src="scope.row.profile" class="user-avatar"
+                                      @click="handleViewProfile(scope.row.profile)"></el-image>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="username" label="用户名"></el-table-column>
+                    <el-table-column prop="password" label="密码"></el-table-column>
+                    <el-table-column prop="balance" label="余额"></el-table-column>
+                    <el-table-column prop="email" label="邮箱"></el-table-column>
+                    <el-table-column prop="sex" label="性别" width="80">
+                        <template slot-scope="scope">
+                            <i :class="{'el-icon-male': scope.row.sex === '男', 'el-icon-female': scope.row.sex === '女'}"></i>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="create_time" label="创建时间" width="180"></el-table-column>
+                    <el-table-column label="操作" width="150">
+                        <template slot-scope="scope">
+                            <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row)">
+                                编辑
+                            </el-button>
+                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.row)">
+                                删除
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                <el-pagination
+                        background
+                        @current-change="handleCurrentChange"
+                        layout="prev, pager, next"
+                        :current-page="currentpage"
+                        :page-size="pagesize"
+
+                        :total="totalUserNum">
+                </el-pagination>
+
+            </el-card>
+        </el-main>
+    </el-container>
+
+
+    <!-- 显示头像的大图对话框 -->
+    <el-dialog :visible.sync="imageDialogVisible" width="30%">
+        <img :src="currentProfile" alt="头像图片" style="width: 100%;">
+    </el-dialog>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                currentpage: 1,
+                totalUserNum: 0,
+                pagesize: 5,
+                eidtDialogVisible: false,
+                imageUrl: '',
+                file: null,
+
+                eidiUserImgUrl: '',
+                eidiFile: null,
+
+                search: '', // 搜索框绑定的内容
+                dialogVisible: false, // 新增/编辑用户对话框的显示和隐藏
+                imageDialogVisible: false, // 头像大图对话框的显示和隐藏
+                dialogTitle: '新增用户', // 对话框标题（根据新增或编辑变化）
+                currentProfile: '', // 当前点击的头像链接
+                // 用户表单绑定的数据
+                userForm: {
+                    profile: '',
+                    name: '',
+                    username: '',
+                    password: '',
+                    balance: 0,
+                    email: '',
+                    sex: '',
+                },
+                editUserForm: {
+                    id: '',
+                    profile: '',
+                    name: '',
+                    username: '',
+                    password: '',
+                    balance: 0,
+                    email: '',
+                    sex: '',
+                    create_time: '',
+                }, // 编辑用户的临时变量，用于存储编辑前的用户数据
+                // 默认的用户列表数据
+                users: []
+            }
+        },
+        computed: {
+            // 计算属性，根据搜索关键字过滤用户列表
+            filteredUsers() {
+                if (this.search) {
+                    return this.users.filter(user =>
+                        user.username.includes(this.search) ||
+                        user.name.includes(this.search) ||
+                        user.email.includes(this.search)
+                    );
+                }
+                return this.users;
+            }
+        },
+        created() {
+            //检查是否已经登录
+            axios.post(urlluodeng + '/admin/GetLoginUserInfo').then(res => {
+                if (res.data.result) {
+                    /* this.getALlUsers_list();*/
+                    this.getUserNum();
+                    this.getTheFirstPageUsers();
+                } else {
+                    //用户未登录
+                    this.$message.error('401 未授权，请先登录');
+                    setTimeout(() => {
+                        window.location.href = 'Admin_login.html';
+                    }, 500)
+                }
+            }).catch(err => {
+                console.log(err);
+                this.$message.error('网络错误，请稍后再试！');
+                setTimeout(() => {
+                    window.location.href = 'Admin_login.html';
+                }, 500)
+            });
+        },
+        methods: {
+            rushData() {
+                axios.get(urlluodeng + `/user/getUserPage?pagenum=${this.currentpage}&pagesize=${this.pagesize}`).then(res => {
+                    if (res.data.result) {
+                        this.users = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(err => {
+                        console.log(err);
+                        this.$message.error('网络错误，数据刷新失败');
+                    }
+                );
+               this. getUserNum() ;
+
+            },
+            getTheFirstPageUsers() {
+                axios.get(urlluodeng + `/user/getUserPage?pagenum=1&pagesize=${this.pagesize}`).then(res => {
+                    if (res.data.result) {
+                        this.users = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(err => {
+                        console.log(err);
+                        this.$message.error('网络错误，请稍后再试！');
+                    }
+                );
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                this.currentpage = val;
+                axios.get(urlluodeng + `/user/getUserPage?pagenum=${val}&pagesize=${this.pagesize}`).then(res => {
+                    if (res.data.result) {
+                        this.users = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(err => {
+                        console.log(err);
+                        this.$message.error('网络错误，请稍后再试！');
+                    }
+                );
+            },
+            getUserNum() {
+                axios.get(urlluodeng + '/user/getUserCount').then(res => {
+                    if (res.data.result) {
+                        this.totalUserNum = res.data.userCount;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    this.$message.error('网络错误，请稍后再试！');
+                });
+            },
+
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                if (isJPG && isLt2M) {
+                    this.imageUrl = URL.createObjectURL(file);
+                    this.file = file;
+                }
+                return false; // 阻止自动上传
+            },
+            beforeAvatarEidiUpload(file) {
+                const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                if (isJPG && isLt2M) {
+                    this.eidiUserImgUrl = URL.createObjectURL(file);
+                    this.eidiFile = file;
+                }
+                return false; // 阻止自动上传
+            },
+
+            getALlUsers_list() {
+                axios.post(urlluodeng + '/user/getAllUser').then(res => {
+                    if (res.data.result) {
+                        this.users = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    this.$message.error('网络错误，请稍后再试！');
+                });
+            },
+            navigateTo(page) {
+                window.location.href = page; // 使用参数指定跳转页面路径
+            },
+            // 搜索按钮点击处理
+            handleSearch() {
+                // 这里只是更新搜索关键字，filteredUsers 会自动更新
+                console.log(this.search);
+            },
+            // 头像点击处理，显示大图对话框
+            handleViewProfile(profile) {
+                this.currentProfile = profile;
+                this.imageDialogVisible = true;
+            },
+            // 编辑按钮点击处理，显示编辑对话框并填充表单数据
+            handleEdit(row) {
+                this.eidiUserImgUrl = row.profile;
+                this.editUserForm = {...row};
+                this.eidtDialogVisible = true;
+            },
+            // 保存按钮点击处理，保存新增或编辑后的用户数据
+            handleSave() {
+                console.log("表单数据：");
+                console.log(this.userForm);
+                console.log(this.imageUrl);
+                console.log(this.file);
+                if (this.userForm.username === '' || this.userForm.name === '' || this.userForm.password === '' || this.userForm.email === '' || this.userForm.sex === '') {
+                    this.$message.error('请填写完整信息');
+                } else {
+                    if (this.file === null) {
+                        this.$confirm('您没有选择头像，是否继续?', '提示', {
+                            confirmButtonText: '继续',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.userForm.profile = '';
+                            this.file = null;
+                            let formData = new FormData();
+                            formData.append('file', this.file);//头像文件
+                            formData.append('name', this.userForm.name);
+                            formData.append('username', this.userForm.username);
+                            formData.append('password', this.userForm.password);
+                            formData.append('balance', this.userForm.balance);
+                            formData.append('email', this.userForm.email);
+                            formData.append('sex', this.userForm.sex);
+
+                            // 提交到后台
+                            axios.post(urlluodeng + '/user/addWanZhengUser', formData).then(res => {
+                                if (res.data.result) {
+                                    this.$message.success('保存成功!');
+                                    this.dialogVisible = false;
+                                    /* this.getALlUsers_list();*/
+                                    /*this.getUserNum();*/
+                                    this.rushData()
+                                } else {
+                                    this.$message.error(res.data.message);
+                                }
+                            }).catch(err => {
+                                console.log(err);
+                                this.$message.error('网络错误，请稍后再试！');
+                            });
+                        }).catch(() => {
+                            this.$message.warning('您取消保存');
+                            this.userForm = {
+                                profile: '',
+                                name: '',
+                                username: '',
+                                password: '',
+                                balance: 0,
+                                email: '',
+                                sex: '',
+                            },
+                                this.file = null,
+                                this.imageUrl = '',
+                                this.dialogVisible = false;
+                        });
+
+                    } else {
+                        let formData = new FormData();
+                        formData.append('file', this.file);//头像文件
+                        formData.append('name', this.userForm.name);
+                        formData.append('username', this.userForm.username);
+                        formData.append('password', this.userForm.password);
+                        formData.append('balance', this.userForm.balance);
+                        formData.append('email', this.userForm.email);
+                        formData.append('sex', this.userForm.sex);
+
+                        // 提交到后台
+                        axios.post(urlluodeng + '/user/addWanZhengUser', formData).then(res => {
+                            if (res.data.result) {
+                                this.$message.success('保存成功!');
+                                this.dialogVisible = false;
+                                /* this.getALlUsers_list();*/
+                                /*this.getUserNum();*/
+                                this.rushData();
+                            } else {
+                                this.$message.error(res.data.message);
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            this.$message.error('网络错误，请稍后再试！');
+                        });
+                    }
+                }
+            }
+            ,
+            clearAvatar() {
+                this.file = null;
+                this.imageUrl = '';
+
+            },
+            handleEiditSave() {
+                console.log("表单数据：");
+                console.log(this.editUserForm)
+                console.log(this.eidiFile);
+                if (this.editUserForm.username === '' || this.editUserForm.name === '' || this.editUserForm.password === '' || this.editUserForm.email === '' || this.editUserForm.sex === '') {
+                    this.$message.error('请填写完整信息');
+                } else {
+                    if (this.eidiFile === null) {
+                        let formData = new FormData();
+                        formData.append('id', this.editUserForm.id);
+                        formData.append('name', this.editUserForm.name);
+                        formData.append('username', this.editUserForm.username);
+                        formData.append('password', this.editUserForm.password);
+                        formData.append('balance', this.editUserForm.balance);
+                        formData.append('email', this.editUserForm.email);
+                        formData.append('sex', this.editUserForm.sex);
+                        // formData.append('create_time', this.editUserForm.create_time); 格式和后台不一致，注释掉
+
+                        // 没有上传头像，直接提交后台
+                        axios.post(urlluodeng + '/user/updateWanZhengUserNoProfile', formData).then(res => {
+                            if (res.data.result) {
+                                this.$message.success(res.data.msg);
+                                this.eidtDialogVisible = false;
+                                /* this.getALlUsers_list();*/
+                                this.rushData();
+                                this.eidtDialogVisible = false;
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            this.$message.error('网络错误，请稍后再试！');
+                        });
+                    } else {
+                        let formData = new FormData();
+                        formData.append('file', this.eidiFile);//头像文件
+                        formData.append('id', this.editUserForm.id);
+                        formData.append('name', this.editUserForm.name);
+                        formData.append('username', this.editUserForm.username);
+                        formData.append('password', this.editUserForm.password);
+                        formData.append('balance', this.editUserForm.balance);
+                        formData.append('email', this.editUserForm.email);
+                        formData.append('sex', this.editUserForm.sex);
+                        // formData.append('create_time', this.editUserForm.create_time);
+
+                        // 提交到后台
+                        axios.post(urlluodeng + '/user/updateWanZhengUserHaveProfile', formData).then(res => {
+                            if (res.data.result) {
+                                this.$message.success('保存成功!');
+                                this.eidtDialogVisible = false;
+                                /* this.getALlUsers_list();*/
+                                this.rushData();
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            this.$message.error('网络错误，请稍后再试！');
+                        });
+                    }
+                }
+
+            },
+            // 删除按钮点击处理，删除指定用户数据
+            handleDelete(row) {
+                this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    console.log(row);
+                    let deleteData = new FormData();
+                    deleteData.append('username', row.username);
+                    axios.post(urlluodeng + '/user/deleteUser', deleteData).then(res => {
+                        if (res.data.result) {
+                            this.$message.success('删除成功!');
+                            /* this.getALlUsers_list();*/
+                            /*this.getUserNum();*/
+                            this.rushData()
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        this.$message.error('网络错误，请稍后再试！');
+                    });
+                }).catch(() => {
+                    this.$message.warning('已取消删除');
+                });
+            }
+
+
+        }
+    })
+    ;
+</script>
+</body>
+</html>

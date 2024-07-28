@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue Checkbox Binding</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <h2>选择你喜欢的水果：</h2>
+    <div>
+        <input type="checkbox" id="apple" value="苹果" v-model="selectedFruits">
+        <label for="apple">苹果</label>
+    </div>
+    <div>
+        <input type="checkbox" id="banana" value="香蕉" v-model="selectedFruits">
+        <label for="banana">香蕉</label>
+    </div>
+    <div>
+        <input type="checkbox" id="orange" value="橙子" v-model="selectedFruits">
+        <label for="orange">橙子</label>
+    </div>
+    <div>
+        <input type="checkbox" id="grape" value="葡萄" v-model="selectedFruits">
+        <label for="grape">葡萄</label>
+    </div>
+
+    <p>你选择的水果是：{{ selectedFruits.join(', ') }}</p>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            selectedFruits: []
+        }
+    });
+</script>
+</body>
+</html>

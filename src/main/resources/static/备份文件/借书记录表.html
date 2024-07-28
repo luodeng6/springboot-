@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>借书系统</title>
+    <!-- 引入 layui.css -->
+    <link href="layui/layui.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+    <!--引入图标库-->
+    <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">-->
+
+    <link rel="stylesheet" href="elementUI/elementCSS.css"/>
+    <!--    &lt;!&ndash;引入element的图标库&ndash;&gt;-->
+    <!--    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/xiangqing.css">
+    <script src="js/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+
+            padding: 0;
+        }
+
+        /*.container {*/
+        /*    max-width: 1200px;*/
+        /*    margin: 0 auto;*/
+        /*    padding: 20px;*/
+        /*    background: #fff;*/
+        /*    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+        /*}*/
+
+        h1, h2 {
+            color: #4CAF50;
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        /*   table {
+               width: 100%;
+               border-collapse: collapse;
+               margin-top: 15px;
+           }
+
+           table, th, td {
+               border: 1px solid #ddd;
+           }
+
+           th, td {
+               padding: 10px;
+               text-align: left;
+           }
+
+           th {
+               background-color: #f2f2f2;
+           }*/
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px 0;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <nav class="navbar">
+        <div class="nav-container" style="width: 100%;position: relative;">
+            <a href="book.html" class="brand">首页</a>
+            <ul class="nav-links">
+                <li><a href="#">我的订单</a></li>
+                <li><a href="#">我的购物车</a></li>
+                <li><a href="myborrow.html">借书记录</a></li>
+                <li><a href="#">我的收藏</a></li>
+                <li><a href="#">系统公告(5)</a></li>
+                <li style="margin-left: 100px;">
+                    <img @click="show_alter_info" style="width: 32px;cursor: pointer;" src="img/alter.jpg" alt="">
+                </li>
+                <li><a href="#">退出登录</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid" style="margin: 10px;">
+        <section class="actions">
+            <h2>操作</h2>
+            <input type="text" placeholder="输入书名或作者">
+            <button>搜索书籍</button>
+            <button>借书</button>
+            <button>还书</button>
+        </section>
+        <!--        <h1>借书系统</h1>-->
+
+
+        <!-- <div style="display: flex;">
+             <section class="user-info">
+                 <h2>个人信息</h2>
+                 <p><strong>姓名：</strong> 张三</p>
+                 <p><strong>用户ID：</strong> 12345678</p>
+                 <p><strong>邮箱：</strong> zhangsan@example.com</p>
+                 <p><strong>手机号码：</strong> 123-456-7890</p>
+             </section>
+
+             <section class="borrow-info">
+                 <h2>借书信息</h2>
+                 <p><strong>已借书籍数量：</strong> 3</p>
+                 <p><strong>最大可借数量：</strong> 5</p>
+                 <p><strong>账户状态：</strong> 正常</p>
+             </section>
+         </div>-->
+
+
+        <section class="borrow-record">
+            <h2>借书记录1</h2>
+
+            <el-table
+                    :data="tableData"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName">
+                <el-table-column
+                        prop="date"
+                        label="日期"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="姓名"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="address"
+                        label="地址">
+                </el-table-column>
+            </el-table>
+
+            <!--  <table>
+                  <thead>
+                  <tr>
+                      <th>书籍编号</th>
+                      <th>书名</th>
+                      <th>借书日期</th>
+                      <th>归还日期</th>
+                      <th>状态</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                      <td>BK10001</td>
+                      <td>《挪威的森林》</td>
+                      <td>2023-09-15</td>
+                      <td>2023-10-15</td>
+                      <td>已归还</td>
+                  </tr>
+                  <tr>
+                      <td>BK10023</td>
+                      <td>《百年孤独》</td>
+                      <td>2023-09-20</td>
+                      <td>2023-10-20</td>
+                      <td>已归还</td>
+                  </tr>
+                  <tr>
+                      <td>BK10045</td>
+                      <td>《活着》</td>
+                      <td>2023-10-01</td>
+                      <td>2023-11-01</td>
+                      <td>借阅中</td>
+                  </tr>
+                  </tbody>
+              </table>-->
+        </section>
+
+        <section class="available-books">
+            <h2>可借书籍列表</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>书籍编号</th>
+                    <th>书名</th>
+                    <th>作者</th>
+                    <th>借阅状态</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>BK10123</td>
+                    <td>《红楼梦》</td>
+                    <td>曹雪芹</td>
+                    <td>可借</td>
+                </tr>
+                <tr>
+                    <td>BK10134</td>
+                    <td>《西游记》</td>
+                    <td>吴承恩</td>
+                    <td>已借出</td>
+                </tr>
+                <tr>
+                    <td>BK10156</td>
+                    <td>《三国演义》</td>
+                    <td>罗贯中</td>
+                    <td>可借</td>
+                </tr>
+                <tr>
+                    <td>BK10167</td>
+                    <td>《水浒传》</td>
+                    <td>施耐庵</td>
+                    <td>可借</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+        <section class="notice">
+            <h2>注意事项</h2>
+            <p>1. 最大可借图书数量为5本，请合理安排借阅计划。</p>
+            <p>2. 逾期未还将会影响账户状态并产生罚金。</p>
+        </section>
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<!-- 引入 layui.js -->
+<script src="layui/layui.js"></script>
+<script src="bootstrap/bootstrap.min.js"></script>
+<script src="js/vue@2.js"></script>
+<!-- 引入 Axios 库 -->
+<script src="js/axios.min.js"></script>
+<script src="elementUI/elementJS.js"></script>
+<script src="js/data.js"></script>
+<script src="js/myborrow.js"></script>
+</body>
+</html>

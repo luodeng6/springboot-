@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间  namespace里是接口类名-->
+<mapper namespace="com.book.demo.Mapper.DataMapper">
+    <!--mybatis调用这个存储过程，获取每个表的查询个数-->
+    <select id="getTableCounts" statementType="CALLABLE">
+        {CALL GetTableCounts(
+                #{userCount, mode=OUT, jdbcType=INTEGER},
+                #{gonggaoCount, mode=OUT, jdbcType=INTEGER},
+                #{bookCount, mode=OUT, jdbcType=INTEGER},
+                #{wendaCount, mode=OUT, jdbcType=INTEGER}
+              )}
+    </select>
+</mapper>

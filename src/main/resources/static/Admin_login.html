@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - 图书管理系统</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/Adminl_login.css">
+</head>
+<body>
+<div id="app">
+    <!--罗邓图书管理系统-->
+    <div class="title">
+        <img style="    width: 81%;" src="img/logo.png" alt="">
+    </div>
+    <div class="left-panel">
+        <!-- 图书图标，您可以换成其他符合图书管理系统的图标 -->
+        <img src="https://cdn-icons-png.flaticon.com/512/2917/2917990.png" alt="Library Icon">
+        <h2>欢迎使用<br>图书管理系统</h2>
+    </div>
+    <div class="right-panel">
+        <!--<div class="admin-login">管理员登录</div>-->
+        <el-form class="login-form">
+            <el-form-item label="用户名">
+                <el-input v-model="username" placeholder="请输入用户名"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-input type="password" v-model="password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="handleLogin">登录</el-button>
+            </el-form-item>
+        </el-form>
+
+
+        <el-dialog :visible.sync="showCaptcha" title="请输入验证码" :close-on-click-modal="false">
+            <el-form>
+                <el-form-item label="验证码">
+                    <el-input v-model="emailCode" placeholder="请输入验证码"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="handleEmailCode">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="js/data.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                username: '',
+                password: '',
+                emailCode: '',
+                showCaptcha: false,
+            };
+        },
+        created() {
+
+            //检查是否已经登录
+            axios.post(urlluodeng + '/admin/GetLoginUserInfo').then(res => {
+                if (res.data.result) {
+                    this.$message.success('您已经登录，正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = 'Admin_index.html';
+                    }, 1500)
+                }
+            }).catch(err => {
+                console.log(err);
+                this.$message.error('网络错误，请稍后再试');
+            });
+
+        },
+        methods: {
+            handleLogin() {
+                if (this.username === '') {
+                    this.$message.error('请输入用户名');
+                } else {
+                    if (this.password === '') {
+                        this.$message.error('请输入密码');
+                    } else {
+                        let AdminUserInfo = new FormData();
+                        AdminUserInfo.append('username', this.username);
+                        AdminUserInfo.append('password', this.password);
+                        axios.post(urlluodeng + '/admin/postInfo', AdminUserInfo).then(res => {
+                            if (res.data.result) {
+                                //弹窗
+                                this.showCaptcha = true;
+                                this.$message.success(res.data.msg);
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        }).catch(err => {
+                            console.log(err);
+                            this.$message.error('网络错误，请稍后再试');
+                        });
+                    }
+                }
+            },
+            handleEmailCode() {
+                if (this.emailCode === '') {
+                    this.$message.error('请输入验证码');
+                } else {
+
+
+                    let AdminEmailCode = new FormData();
+                    AdminEmailCode.append('eamilCode', this.emailCode);
+                    axios.post(urlluodeng + '/admin/emailCodeRZ', AdminEmailCode).then(res => {
+                        if (res.data.result) {
+                            this.$message.success(res.data.msg);
+                            this.showCaptcha = false;
+                            setTimeout(() => {
+                                window.location.href = 'Admin_index.html';
+                            }, 1000);
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        this.$message.error('网络错误，请稍后再试');
+                    });
+
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

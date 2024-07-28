@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Element UI 组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .app-aside {
+            background: #2d3a4b;
+            padding: 0;
+            height: 100vh;
+            color: white;
+        }
+
+        .app-menu {
+            height: 100%;
+        }
+
+        .app-header {
+            background: #409EFF;
+            color: white;
+            text-align: center;
+            line-height: 60px;
+            height: 60px;
+        }
+
+        .app-main {
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .form-dialog {
+            width: 600px;
+        }
+
+        .form-action {
+            text-align: right;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .el-icon-male {
+            color: #409EFF;
+        }
+
+        .el-icon-female {
+            color: #FF69B4;
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="app-container">
+    <!-- 左侧导航栏 -->
+    <el-aside width="200px" class="app-aside">
+        <el-menu class="app-menu" :default-openeds="['1']">
+            <el-submenu index="1">
+                <template slot="title">
+                    <i class="el-icon-menu"></i>
+                    <span>菜单</span>
+                </template>
+                <el-menu-item index="1-1" @click="navigateTo('后台需求3.html')">
+                    <i class="el-icon-s-data"></i>仪表盘
+                </el-menu-item>
+                <el-menu-item index="1-2" @click="navigateTo('user.html')">
+                    <i class="el-icon-user"></i>用户管理
+                </el-menu-item>
+                <el-menu-item index="1-3" @click="navigateTo('settings.html')">
+                    <i class="el-icon-setting"></i>设置
+                </el-menu-item>
+                <el-menu-item index="1-4" @click="navigateTo('wenda1.html')">
+                    <i class="el-icon-question"></i>问答管理
+                </el-menu-item>
+                <el-menu-item index="1-5" @click="navigateTo('公告1.html')">
+                    <i class="el-icon-message"></i>公告管理
+                </el-menu-item>
+                <el-menu-item index="1-6" @click="navigateTo('购物车.html')">
+                    <i class="el-icon-shopping-cart-full"></i>购物车管理
+                </el-menu-item>
+            </el-submenu>
+        </el-menu>
+    </el-aside>
+
+    <!-- 右侧操作区域 -->
+    <el-container>
+        <el-header class="app-header">用户管理</el-header>
+        <el-main class="app-main">
+            <!-- 用户查询模块 -->
+            <el-input placeholder="请输入用户名" v-model="search" class="input-with-select">
+                <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+            </el-input>
+
+            <!-- 用户新增模块 -->
+            <el-button type="primary" @click="dialogVisible = true" style="margin: 20px 0;">新增用户</el-button>
+
+            <!-- 用户列表展示 -->
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>用户列表</span>
+                </div>
+                <el-table :data="filteredUsers" style="width: 100%;" stripe border>
+                    <el-table-column prop="id" label="ID" width="50"></el-table-column>
+                    <el-table-column prop="profile" label="头像" width="80">
+                        <template slot-scope="scope">
+                            <el-image :src="scope.row.profile" class="user-avatar" @click="handleViewProfile(scope.row.profile)"></el-image>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="username" label="用户名"></el-table-column>
+                    <el-table-column prop="password" label="密码"></el-table-column>
+                    <el-table-column prop="balance" label="余额"></el-table-column>
+                    <el-table-column prop="email" label="邮箱"></el-table-column>
+                    <el-table-column prop="sex" label="性别" width="80">
+                        <template slot-scope="scope">
+                            <i :class="{'el-icon-male': scope.row.sex === '男', 'el-icon-female': scope.row.sex === '女'}"></i>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="create_time" label="创建时间" width="180"></el-table-column>
+                    <el-table-column label="操作" width="150">
+                        <template slot-scope="scope">
+                            <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-card>
+        </el-main>
+    </el-container>
+
+    <!-- 增加用户/编辑用户的对话框 -->
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" class="form-dialog">
+        <el-form ref="userForm" :model="userForm" label-width="100px">
+            <el-form-item label="头像链接">
+                <el-input v-model="userForm.profile"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名">
+                <el-input v-model="userForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="用户名">
+                <el-input v-model="userForm.username"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-input type="password" v-model="userForm.password"></el-input>
+            </el-form-item>
+            <el-form-item label="余额">
+                <el-input v-model="userForm.balance"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱">
+                <el-input v-model="userForm.email"></el-input>
+            </el-form-item>
+            <el-form-item label="性别">
+                <el-radio-group v-model="userForm.sex">
+                    <el-radio label="男"><i class="el-icon-male"></i></el-radio>
+                    <el-radio label="女"><i class="el-icon-female"></i></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item class="form-action">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="handleSave">保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+
+    <!-- 显示头像的大图对话框 -->
+    <el-dialog :visible.sync="imageDialogVisible" width="30%">
+        <img :src="currentProfile" alt="头像图片" style="width: 100%;">
+    </el-dialog>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                search: '', // 搜索框绑定的内容
+                dialogVisible: false, // 新增/编辑用户对话框的显示和隐藏
+                imageDialogVisible: false, // 头像大图对话框的显示和隐藏
+                dialogTitle: '新增用户', // 对话框标题（根据新增或编辑变化）
+                currentProfile: '', // 当前点击的头像链接
+                userForm: { // 用户表单绑定的数据
+                    id: '',
+                    profile: '',
+                    name: '',
+                    username: '',
+                    password: '',
+                    balance: '',
+                    email: '',
+                    sex: '',
+                    create_time: ''
+                },
+                users: [ // 默认的用户列表数据
+                    { id: 1, profile: 'https://via.placeholder.com/50', name: '张三', username: 'zhangsan', password: '123456', balance: 1000, email: 'zhangsan@example.com', sex: '男', create_time: '2023-07-15 10:00' },
+                    { id: 2, profile: 'https://via.placeholder.com/50', name: '李四', username: 'lisi', password: '123456', balance: 2000, email: 'lisi@example.com', sex: '女', create_time: '2023-07-16 11:00' },
+                    { id: 3, profile: 'https://via.placeholder.com/50', name: '张三', username: 'zhangsan', password: '123456', balance: 1000, email: 'zhangsan@example.com', sex: '男', create_time: '2023-07-15 10:00' },
+                    { id: 4, profile: 'https://via.placeholder.com/50', name: '李四', username: 'lisi', password: '123456', balance: 2000, email: 'lisi@example.com', sex: '女', create_time: '2023-07-16 11:00' },
+                    { id: 5, profile: 'https://via.placeholder.com/50', name: '张三', username: 'zhangsan', password: '123456', balance: 1000, email: 'zhangsan@example.com', sex: '男', create_time: '2023-07-15 10:00' },
+                    { id: 6, profile: 'https://via.placeholder.com/50', name: '李四', username: 'lisi', password: '123456', balance: 2000, email: 'lisi@example.com', sex: '女', create_time: '2023-07-16 11:00' },
+                    { id: 7, profile: 'https://via.placeholder.com/50', name: '张三', username: 'zhangsan', password: '123456', balance: 1000, email: 'zhangsan@example.com', sex: '男', create_time: '2023-07-15 10:00' },
+                    { id: 8, profile: 'https://via.placeholder.com/50', name: '李四', username: 'lisi', password: '123456', balance: 2000, email: 'lisi@example.com', sex: '女', create_time: '2023-07-16 11:00' }
+                ]
+            }
+        },
+        computed: {
+            // 计算属性，根据搜索关键字过滤用户列表
+            filteredUsers() {
+                if (this.search) {
+                    return this.users.filter(user => user.username.includes(this.search));
+                }
+                return this.users;
+            }
+        },
+        methods: {
+            navigateTo(page) {
+                window.location.href = page; // 使用参数指定跳转页面路径
+            },
+            // 搜索按钮点击处理
+            handleSearch() {
+                // 这里只是更新搜索关键字，filteredUsers 会自动更新
+            },
+            // 头像点击处理，显示大图对话框
+            handleViewProfile(profile) {
+                this.currentProfile = profile;
+                this.imageDialogVisible = true;
+            },
+            // 编辑按钮点击处理，显示编辑对话框并填充表单数据
+            handleEdit(row) {
+                this.dialogTitle = '编辑用户';
+                this.userForm = { ...row };
+                this.dialogVisible = true;
+            },
+            // 保存按钮点击处理，保存新增或编辑后的用户数据
+            handleSave() {
+                if (this.userForm.id) {
+                    // 编辑用户数据
+                    const index = this.users.findIndex(user => user.id === this.userForm.id);
+                    if (index !== -1) {
+                        this.users.splice(index, 1, { ...this.userForm, create_time: this.users[index].create_time });
+                    }
+                } else {
+                    // 新增用户数据
+                    const id = this.users.length ? this.users[this.users.length - 1].id + 1 : 1;
+                    const newUser = {
+                        id,
+                        ...this.userForm,
+                        create_time: new Date().toLocaleString()
+                    };
+                    this.users.push(newUser);
+                }
+                this.dialogVisible = false;
+            },
+            // 删除按钮点击处理，删除指定用户数据
+            handleDelete(row) {
+                this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    const index = this.users.findIndex(user => user.id === row.id);
+                    if (index !== -1) {
+                        this.users.splice(index, 1);
+                    }
+                    this.$message.success('删除成功!');
+                }).catch(() => {});
+            }
+        }
+    });
+</script>
+</body>
+</html>

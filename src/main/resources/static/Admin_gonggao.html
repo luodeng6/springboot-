@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统 - 公告管理</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Element UI 组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .app-aside {
+            background: #2d3a4b;
+            padding: 0;
+            height: 100vh;
+            color: white;
+        }
+
+        .app-menu {
+            height: 100%;
+        }
+
+        .app-header {
+            background: #409EFF;
+            color: white;
+            text-align: center;
+            line-height: 60px;
+            height: 60px;
+        }
+
+        .app-main {
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .form-dialog {
+            width: 600px;
+        }
+
+        .form-action {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="app-container">
+    <!-- 左侧导航栏 -->
+    <el-aside width="200px" class="app-aside">
+        <el-menu class="app-menu" :default-openeds="['1']">
+            <el-submenu index="1">
+                <template slot="title">
+                    <i class="el-icon-menu"></i>
+                    <span>菜单</span>
+                </template>
+
+                <el-menu-item index="1-1" @click="navigateTo('Admin_index.html')">
+                    <i class="el-icon-s-data"></i>仪表盘
+                </el-menu-item>
+                <el-menu-item index="1-2" @click="navigateTo('Admin_user.html')">
+                    <i class="el-icon-user"></i>用户管理
+                </el-menu-item>
+                <el-menu-item index="1-3" @click="navigateTo('settings.html')">
+                    <i class="el-icon-setting"></i>设置
+                </el-menu-item>
+                <el-menu-item index="1-4" @click="navigateTo('Admin_wenda.html')">
+                    <i class="el-icon-question"></i>问答管理
+                </el-menu-item>
+                <el-menu-item index="1-5" @click="navigateTo('Admin_gonggao.html')">
+                    <i class="el-icon-message"></i>公告管理
+                </el-menu-item>
+                <el-menu-item index="1-6" @click="navigateTo('Admin_gouwuche.html')">
+                    <i class="el-icon-shopping-cart-full"></i>购物车管理
+                </el-menu-item>
+
+            </el-submenu>
+        </el-menu>
+    </el-aside>
+
+    <!-- 右侧操作区域 -->
+    <el-container>
+        <el-header class="app-header">公告管理</el-header>
+        <el-main class="app-main">
+
+            <!-- 公告发布d对话框 -->
+            <el-dialog title="发布公告" :visible.sync="dialogTableVisible">
+                <!-- 公告发布模块 -->
+                <!-- <el-card class="box-card" style="margin-bottom: 20px;">-->
+                <div style="margin-bottom: 20px;">
+                  <!--  <div slot="header" class="clearfix">
+                        <span>发布公告</span>
+                    </div>-->
+                    <el-form ref="form" :model="form" label-width="100px">
+                        <el-form-item label="标题">
+                            <el-input v-model="form.title"></el-input>
+                        </el-form-item>
+                        <el-form-item label="内容">
+                            <el-input type="textarea" v-model="form.content"></el-input>
+                        </el-form-item>
+                        <!--  <el-form-item label="发布者">
+                              <el-input v-model="form.user"></el-input>
+                          </el-form-item>-->
+                        <el-form-item label="重要程度">
+                            <el-rate v-model="form.important" :max="5"></el-rate>
+                        </el-form-item>
+                        <el-form-item label="过期时间">
+                            <el-date-picker v-model="form.expirationtime" type="datetime"
+                                            placeholder="选择日期时间"></el-date-picker>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="handlePublish">发布</el-button>
+                            <el-button @click="handleResetForm">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <!-- </el-card>-->
+                </div>
+            </el-dialog>
+
+
+            <!-- 公告列表展示 -->
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>公告列表</span>
+                    <el-button style="float: right; padding: 3px 0" type="text" @click="dialogTableVisible = true">
+                        添加公告
+                    </el-button>
+                </div>
+                <el-table :data="notices" style="width: 100%;" stripe border>
+                    <el-table-column prop="id" label="ID" width="50"></el-table-column>
+                    <el-table-column prop="title" label="标题"></el-table-column>
+                    <el-table-column prop="content" label="内容"></el-table-column>
+                    <el-table-column prop="user" label="发布者"></el-table-column>
+                    <el-table-column prop="important" label="重要程度" width="100">
+                        <template slot-scope="scope">
+                            <el-rate :value="scope.row.important" :max="5" disabled></el-rate>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="expirationtime" label="过期时间" width="180"></el-table-column>
+                    <el-table-column prop="time" label="发布时间" width="180"></el-table-column>
+                    <el-table-column label="操作" width="150">
+                        <template slot-scope="scope">
+                            <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row)">
+                                编辑
+                            </el-button>
+                            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.row)">
+                                删除
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-card>
+        </el-main>
+    </el-container>
+
+    <!-- 编辑公告的对话框 -->
+    <el-dialog title="编辑公告" :visible.sync="dialogVisible" class="form-dialog">
+        <el-form ref="editForm" :model="editForm" label-width="100px">
+            <el-form-item label="标题">
+                <el-input v-model="editForm.title"></el-input>
+            </el-form-item>
+            <el-form-item label="内容">
+                <el-input type="textarea" v-model="editForm.content"></el-input>
+            </el-form-item>
+            <el-form-item label="发布者">
+                <el-input v-model="editForm.user"></el-input>
+            </el-form-item>
+            <el-form-item label="重要程度">
+                <el-rate v-model="editForm.important" :max="5"></el-rate>
+            </el-form-item>
+            <el-form-item label="过期时间">
+                <el-date-picker v-model="editForm.expirationtime" type="datetime"
+                                placeholder="选择日期时间"></el-date-picker>
+            </el-form-item>
+            <el-form-item class="form-action">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="handleUpdate">更新</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                dialogTableVisible: false,
+                user: {},
+                form: {
+                    title: '',
+                    content: '',
+                    user: '',
+                    important: 0,
+                    expirationtime: ''
+                },
+                notices: [
+                    {
+                        id: 1,
+                        title: '系统维护公告',
+                        content: '系统将于明晚8点进行维护。',
+                        user: '管理员',
+                        important: 3,
+                        expirationtime: '2023-07-16 20:00',
+                        time: '2023-07-15 10:00'
+                    }
+                ],
+                dialogVisible: false,
+                editForm: {
+                    id: '',
+                    title: '',
+                    content: '',
+                    user: '',
+                    important: 0,
+                    expirationtime: ''
+                }
+            }
+        },
+        created() {
+            // 获取用户信息
+        },
+        methods: {
+            navigateTo(page) {
+                window.location.href = page; // 使用参数指定跳转页面路径
+            },
+            // 提交表单数据
+            handlePublish() {
+                const id = this.notices.length ? this.notices[this.notices.length - 1].id + 1 : 1;
+                const newNotice = {
+                    id,
+                    ...this.form,
+                    time: new Date().toLocaleString()
+                };
+                this.notices.push(newNotice);
+                this.handleResetForm();
+            },
+            handleResetForm() {
+                this.$refs.form.resetFields();
+            },
+            handleEdit(row) {
+                this.editForm = {...row};
+                this.dialogVisible = true;
+            },
+            handleUpdate() {
+                const index = this.notices.findIndex(notice => notice.id === this.editForm.id);
+                if (index !== -1) {
+                    this.notices.splice(index, 1, {...this.editForm, time: new Date().toLocaleString()});
+                }
+                this.dialogVisible = false;
+            },
+            handleDelete(row) {
+                this.$confirm('此操作将永久删除该公告, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    const index = this.notices.findIndex(notice => notice.id === row.id);
+                    if (index !== -1) {
+                        this.notices.splice(index, 1);
+                    }
+                    this.$message.success('删除成功!');
+                }).catch(() => {
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

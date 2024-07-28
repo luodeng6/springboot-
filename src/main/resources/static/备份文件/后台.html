@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Template</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入 Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Element UI 组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .app-aside {
+            background: #2d3a4b;
+            padding: 0;
+            height: 100vh;
+            color: white;
+        }
+
+        .app-menu {
+            height: 100%;
+        }
+
+        .app-header {
+            background: #409EFF;
+            color: white;
+            text-align: center;
+            line-height: 60px;
+            height: 60px;
+        }
+
+        .app-main {
+            padding: 20px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="app-container">
+    <!-- 左侧导航栏 -->
+    <el-aside width="200px" class="app-aside">
+        <el-menu class="app-menu" :default-openeds="['1']">
+            <el-submenu index="1">
+                <template slot="title">Menu</template>
+                <el-menu-item index="1-1">Dashboard</el-menu-item>
+                <el-menu-item index="1-2">Settings</el-menu-item>
+            </el-submenu>
+        </el-menu>
+    </el-aside>
+
+    <!-- 右侧操作区域 -->
+    <el-container>
+        <el-header class="app-header">Admin Dashboard</el-header>
+        <el-main class="app-main">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>Operations</span>
+                </div>
+                <el-table :data="tableData" style="width: 100%;" stripe border>
+                    <el-table-column prop="date" label="Date" width="180"></el-table-column>
+                    <el-table-column prop="name" label="Name" width="180"></el-table-column>
+                    <el-table-column prop="address" label="Address"></el-table-column>
+                </el-table>
+                <el-form ref="form" :model="form" label-width="120px" style="margin-top: 20px;">
+                    <el-form-item label="Name">
+                        <el-input v-model="form.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="Region">
+                        <el-select v-model="form.region" placeholder="Select a region">
+                            <el-option label="Region 1" value="region1"></el-option>
+                            <el-option label="Region 2" value="region2"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">Submit</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </el-main>
+    </el-container>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                tableData: [
+                    { date: '2016-05-02', name: 'Tom', address: 'No. 1518, Jiang Road, Shanghai' },
+                    { date: '2016-05-04', name: 'Mike', address: 'No. 1517, Jiang Road, Shanghai' }
+                ],
+                form: {
+                    name: '',
+                    region: ''
+                }
+            }
+        },
+        methods: {
+            onSubmit() {
+                console.log('submit!', this.form);
+            }
+        }
+    });
+</script>
+</body>
+</html>

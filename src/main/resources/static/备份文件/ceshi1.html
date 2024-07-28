@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="axios.min.js"></script>
+</head>
+<body>
+
+<script>
+    function get30DaysActivityLists(records) {
+        const registrationCounts = Array(30).fill(0);
+        const cancellationCounts = Array(30).fill(0);
+
+        const today = new Date();
+
+        records.forEach(record => {
+            const recordDate = new Date(record.time);
+            const dayDiff = Math.floor((today - recordDate) / (1000 * 60 * 60 * 24));
+
+            if (dayDiff >= 0 && dayDiff < 30) {
+                if (record.action === '注册') {
+                    registrationCounts[29 - dayDiff]++;
+                } else if (record.action === '注销') {
+                    cancellationCounts[29 - dayDiff]++;
+                }
+            }
+        });
+
+        return {
+            registrationCounts,
+            cancellationCounts
+        };
+    }
+
+    // 示例数据
+    const records =
+        [
+            {
+                "id": 1,
+                "username": "yangjiaoshan2",
+                "time": "2024-07-09T11:39:26.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 2,
+                "username": "yangjiaoshan2",
+                "time": "2024-07-17T11:39:38.000+00:00",
+                "action": "注销"
+            },
+            {
+                "id": 3,
+                "username": "zhangsan001",
+                "time": "2024-07-18T13:34:53.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 4,
+                "username": "lisi002",
+                "time": "2024-07-27T13:34:53.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 5,
+                "username": "wangwu003",
+                "time": "2024-07-27T13:34:54.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 6,
+                "username": "zhaoliu004",
+                "time": "2024-07-27T13:34:54.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 7,
+                "username": "sunqi005",
+                "time": "2024-07-27T13:34:55.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 8,
+                "username": "zhouba006",
+                "time": "2024-07-27T13:34:55.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 9,
+                "username": "wujiu007",
+                "time": "2024-07-27T13:34:55.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 10,
+                "username": "zhengshi008",
+                "time": "2024-07-27T13:34:56.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 11,
+                "username": "liuyi009",
+                "time": "2024-07-27T13:34:56.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 12,
+                "username": "yanger010",
+                "time": "2024-07-27T13:34:56.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 13,
+                "username": "zhangsanfeng011",
+                "time": "2024-07-03T13:34:56.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 14,
+                "username": "lisihai012",
+                "time": "2024-07-27T13:34:56.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 15,
+                "username": "wangwuyue013",
+                "time": "2024-07-27T13:34:57.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 16,
+                "username": "wuzetian014",
+                "time": "2024-07-11T13:34:57.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 17,
+                "username": "sunshangxiang015",
+                "time": "2024-07-27T13:34:58.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 18,
+                "username": "huatuo016",
+                "time": "2024-07-27T13:34:58.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 19,
+                "username": "diaochan017",
+                "time": "2024-07-27T13:34:58.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 20,
+                "username": "zhugeliang018",
+                "time": "2024-07-27T13:34:59.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 21,
+                "username": "huangzhong019",
+                "time": "2024-07-27T13:34:59.000+00:00",
+                "action": "注册"
+            },
+            {
+                "id": 22,
+                "username": "caocao020",
+                "time": "2024-07-27T13:34:59.000+00:00",
+                "action": "注册"
+            }
+        ]
+
+
+    const {registrationCounts, cancellationCounts} = get30DaysActivityLists(records);
+
+    console.log('30 天注册用户数: ', registrationCounts);
+    console.log('30 天注销用户数: ', cancellationCounts);
+
+    console.log('----------------------------------------');
+
+    function getLast30DaysDates() {
+        const dates = [];
+        const today = new Date();
+
+        for (let i = 0; i < 30; i++) {
+            const pastDate = new Date(today);
+            pastDate.setDate(today.getDate() - i);
+            dates.push(pastDate.getDate());
+        }
+
+        return dates.reverse();
+    }
+
+    // 调用函数并打印结果
+    const last30DaysDates = getLast30DaysDates();
+    console.log('近30天的日部分: ', last30DaysDates);
+
+
+
+    console.log('----------------------------------------------');
+    function get30DaysActivityLists(records) {
+        const registrationCounts = Array(30).fill(0);
+        const cancellationCounts = Array(30).fill(0);
+
+        const today = new Date();
+
+        records.forEach(record => {
+            const recordDate = new Date(record.time);
+            const dayDiff = Math.floor((today - recordDate) / (1000 * 60 * 60 * 24));
+
+            if (dayDiff >= 0 && dayDiff < 30) {
+                if (record.action === '注册') {
+                    registrationCounts[29 - dayDiff]++;
+                } else if (record.action === '注销') {
+                    cancellationCounts[29 - dayDiff]++;
+                }
+            }
+        });
+
+        return {
+            registrationCounts,
+            cancellationCounts
+        };
+    }
+    // 获取用户注册、注销数据
+    axios.get( 'http://localhost:8080/userrecord/getAlluserrecord').then(res => {
+        if (res.data.result) {
+            console.log("用户记录数据获取成功：");
+            console.log(res.data.data);
+            // 注册、注销数量
+            const {registrationCountsList, cancellationCountsList} = get30DaysActivityLists(res.data.data);
+            console.log("注册列表：" + registrationCountsList);
+            console.log("注销列表：" + cancellationCountsList);
+        } else {
+            this.$message.error('获取数据失败，请稍后再试！');
+        }
+    }).catch(err => {
+        console.log(err);    // 错误处理
+        this.$message.error('网络错误，请稍后再试！');
+    });
+
+</script>
+</body>
+</html>
